@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Product;
 use App\Helpers\APIHelpers;
+use App\Http\Requests\SaveProductRequest;
 
 class ProductController extends Controller
 {
@@ -49,7 +50,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SaveProductRequest $request)
     {
         $product = new Product();
        // Cach 1: gán từng thằng => hơi chuối
@@ -107,7 +108,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SaveProductRequest $request, $id)
     {
         $msg = 'ProductId not found';
         $msgUpdatedFail = 'Updated product failed';
