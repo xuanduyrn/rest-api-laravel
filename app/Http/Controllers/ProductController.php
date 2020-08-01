@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
+use App\Helpers\APIHelpers;
 
 class ProductController extends Controller
 {
@@ -24,11 +25,12 @@ class ProductController extends Controller
         // });
 
         // Cách 2: Chuối ni xịn hơn => dùng
-        $products = $products->map->only('id', 'name', 'description')->toArray();
-        return response()->json([
-            'msg' => 'success',
-            'results' => $products
-        ]);
+        try {
+            $products = $products->map->only('id', 'name', 'description')->toArray();
+            return APIHelpers::createAPIResponse(true, 200, '', $products, null);
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 401, '', $products, $e->getmessage());
+        }
     }
 
     /**
@@ -57,11 +59,13 @@ class ProductController extends Controller
         // $product->save();
 
         // Cách 2: Ịn thằng fillable vào model cho xịn xò
-        $product = $product->create($request->all());
-        return response()->json([
-            'msg' => 'success',
-            'result' => $product
-        ]);
+        
+        try {
+            $product = $product->create($request->all());
+            return APIHelpers::createAPIResponse(true, 201, 'Product added successfully', $product, null);
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 400, 'Product added failed', null, $e->getMessage());
+        }
     }
 
     /**
@@ -72,11 +76,17 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-       $products = Product::find($id);
-       return response()->json([
-           'msg' => 'success',
-           'result' => $products
-       ]);
+        $msg = 'Get product detail failed';
+        try {
+            $product = Product::find($id);
+            if ($product) {
+                return APIHelpers::createAPIResponse(true, 201, '', $product, null);
+            } else {
+                return APIHelpers::createAPIResponse(true, 401, $msg, null, null);
+            }
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 400, $msg, null, $e->getMessage());
+        }
     }
 
     /**
@@ -99,12 +109,19 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $product = Product::find($id);
-        $result = $product->update($request->all());
-        return response()->json([
-            'msg' => 'success',
-            'result' => $product
-        ]);
+        $msg = 'ProductId not found';
+        $msgUpdatedFail = 'Updated product failed';
+        try {
+            $product = Product::find($id);
+            if ($product) {
+                $result = $product->update($request->all());
+                return APIHelpers::createAPIResponse(true, 201, '', $product, null);
+            } else {
+                return APIHelpers::createAPIResponse(false, 401, $msg, null, null);
+            }
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 400, $msgUpdatedFail, null, $e->getMessage());
+        }
     }
 
     /**
@@ -115,10 +132,18 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::find($id);
-        $product->delete();
-        return response()->json([
-            'msg' => 'success'
-        ]); 
+        $msg = 'ProductId not found';
+        $msgDeleleFail = 'Delete product failed';
+        try {
+            $product = Product::find($id);
+            if ($product) {
+                $product->delete();
+                return APIHelpers::createAPIResponse(true, 201, '', null, null);
+            } else {
+                return APIHelpers::createAPIResponse(false, 401, $msg, null, null);
+            }
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 400, $msgDeleleFail, null, $e->getMessage());
+        }
     }
 }
