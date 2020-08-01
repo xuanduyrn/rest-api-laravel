@@ -18,6 +18,7 @@ class CreateProductsTables extends Migration
             $table->string('name', 100);
             $table->text('description')->nullable;
             $table->float('price');
+            $table->timestamps();
         });
     }
 
