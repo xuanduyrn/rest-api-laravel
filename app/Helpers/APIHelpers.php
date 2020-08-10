@@ -20,6 +20,6 @@ class APIHelpers {
       }
       $result['error'] = null;
     }
-    return $result;
+    return response()->json($result);;
   }
 }
