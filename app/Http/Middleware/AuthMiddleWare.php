@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Helpers\APIHelpers;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthMiddleWare
 {
@@ -16,14 +17,36 @@ class AuthMiddleWare
      */
     public function handle($request, Closure $next)
     {
-        if ((int)$request -> all()['id'] === 12) { // TODO: Backend handle login auth middleware => Mai lam
-            return $next($request);
-        } else {
-            $error = [
-                'msg' => 'Auth request failed!',
-                'code' => 401
-            ];
-            return APIHelpers::createAPIResponse(false, 401, $error['msg'], null, $error);
+        try {
+            if (JWTAuth::parseToken()->authenticate()) {
+                return $next($request);
+            }
+        } catch (\Exception $e) {
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
+                $error = [
+                    'msg' => 'Token Invalid Exception!',
+                    'code' => 401
+                ];
+                return APIHelpers::createAPIResponse(false, 401, $error['msg'], null, $error);
+            } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+                $error = [
+                    'msg' => 'Token Expired Exception!',
+                    'code' => 401
+                ];
+                return APIHelpers::createAPIResponse(false, 401, $error['msg'], null, $error);
+            } else if ( $e instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+                $error = [
+                    'msg' => 'JWT Exception!',
+                    'code' => 401
+                ];
+                return APIHelpers::createAPIResponse(false, 401, $error['msg'], null, $error);
+            } else {
+                $error = [
+                    'msg' => 'Auth Failed!',
+                    'code' => 401
+                ];
+                return APIHelpers::createAPIResponse(false, 401, $error['msg'], null, $error);
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+// use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', 'AuthController@login');
+Route::post('register', 'AuthController@register');
+Route::group(['middleware' => ['authCustom']], function () {
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refreshToken', 'AuthController@refreshToken');
+    Route::get('getUser', 'AuthController@getUser');
 });
 
-Route::group([['middleware' => 'products'], 'namespace' => 'Api\v1'], function () {
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::group(['middleware' => ['authCustom'], 'namespace' => 'Api\v1'], function () {
     Route::resource('products', 'ProductController');
 });
 
