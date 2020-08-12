@@ -24,9 +24,10 @@ class SaveProductRequest extends FormRequest
     public function rules()
     {
         return [
+            'nIdCategory' => 'required|exists:dat_categories,nIdCategory',
             'name' => 'required|max:100',
-            'desctiption' => 'max:500',
-            'price' => 'required|digist_between:1,7'
+            'description' => 'max:500',
+            'price' => 'required|digits_between:1,7'
         ];
     }
 }

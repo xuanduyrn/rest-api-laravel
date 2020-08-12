@@ -28,7 +28,7 @@ class ProductController extends Controller
 
         // Cách 2: Chuối ni xịn hơn => dùng
         try {
-            $products = $products->map->only('id', 'name', 'description')->toArray();
+            $products = $products->map->only('id', 'name', 'description', 'nIdCategory')->toArray();
             return APIHelpers::createAPIResponse(true, 200, '', $products, null);
         } catch (\Exception $e) {
             return APIHelpers::createAPIResponse(false, 401, '', $products, $e->getmessage());
