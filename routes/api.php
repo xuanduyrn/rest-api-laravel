@@ -28,5 +28,6 @@ Route::group(['middleware' => ['authCustom']], function () {
 
 Route::group(['middleware' => ['authCustom'], 'namespace' => 'Api\v1'], function () {
     Route::resource('products', 'ProductController');
+    Route::resource('categories', 'CategoriesController');
 });
 
