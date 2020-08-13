@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Account;
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
+use App\Http\Requests\CreateAccountRequest;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Helpers\APIHelpers;
@@ -13,6 +15,36 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function getAllUsers() {
+        $users = User::all();
+        try {
+            $users = $users->map->only('id', 'email', 'name')->toArray();
+            return APIHelpers::createAPIResponse(true, 200, '', $users, null);
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 401, '', $users, $e->getmessage());
+        }
+    }
+
+    public function getAccountByUser($id) {
+        $user = User::find($id);
+        $user->account;
+        try {
+            return APIHelpers::createAPIResponse(true, 201, 'get Account by Users successfully', $user, null);
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 400, 'get Account by Users failed', null, $e->getMessage());
+        }
+    }
+
+    public function createAccountByUser(CreateAccountRequest $request) {
+        $account = new Account();
+        try {
+            $account = $account->create($request->all());
+            return APIHelpers::createAPIResponse(true, 201, 'Account create successfully', $account, null);
+        } catch (\Exception $e) {
+            return APIHelpers::createAPIResponse(false, 400, 'Account create failed', null, $e->getMessage());
+        }
+    }
+
     public function login(AuthLoginRequest $request) {
         $credentials = $request->only('email', 'password');
         if (!($token = JWTAuth::attempt($credentials))) {

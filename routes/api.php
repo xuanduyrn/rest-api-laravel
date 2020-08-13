@@ -18,8 +18,11 @@ Route::post('login', 'AuthController@login');
 Route::post('register', 'AuthController@register');
 Route::group(['middleware' => ['authCustom']], function () {
     Route::post('logout', 'AuthController@logout');
+    Route::get('getAllUsers', 'AuthController@getAllUsers');
     Route::post('refreshToken', 'AuthController@refreshToken');
     Route::get('getUser', 'AuthController@getUser');
+    Route::get('getAccountByUser/{id}', 'AuthController@getAccountByUser');
+    Route::post('createAccountByUser', 'AuthController@createAccountByUser');
 });
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
