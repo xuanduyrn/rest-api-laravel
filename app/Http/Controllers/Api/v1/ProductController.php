@@ -148,4 +148,18 @@ class ProductController extends Controller
             return APIHelpers::createAPIResponse(false, 400, $msgDeleleFail, null, $e->getMessage());
         }
     }
+
+    public function getProductByCategory($nIdCategory) {
+        $cat = Product::find($nIdCategory);
+        if ($cat) {
+            $cat['category'] = $cat->category;
+            try {
+                return APIHelpers::createAPIResponse(true, 200, 'Get product by category successfully!', $cat, null);
+            }  catch (\Exception $e) {
+                return APIHelpers::createAPIResponse(false, 400, 'Get product by category failed!', null, $e->getMessage());
+            }
+        } else {
+            return APIHelpers::createAPIResponse(false, 401, 'Id category not found!', null, null);
+        }
+    }
 }

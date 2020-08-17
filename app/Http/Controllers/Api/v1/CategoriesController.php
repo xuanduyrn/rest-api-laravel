@@ -131,4 +131,19 @@ class CategoriesController extends Controller
             return APIHelpers::createAPIResponse(false, 400, $msgDeleleFail, null, $e->getMessage());
         }
     }
+
+    public function getListProductByCategory($idProduct) {
+        $cat = Categories::find($idProduct);
+        if ($cat) {
+            $cat['items'] = $cat->products();
+            try {
+                return APIHelpers::createAPIResponse(true, 201, 'successfully', $cat, null);
+            }  catch (\Exception $e) {
+                return APIHelpers::createAPIResponse(false, 400, 'Get list products by category failed!', null, $e->getMessage());
+            }
+        } else {
+            return APIHelpers::createAPIResponse(false, 401, 'Id category not found!', null, null);
+        }
+       
+    }
 }

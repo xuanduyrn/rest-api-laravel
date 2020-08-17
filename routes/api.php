@@ -31,6 +31,8 @@ Route::group(['middleware' => ['authCustom']], function () {
 
 Route::group(['middleware' => ['authCustom'], 'namespace' => 'Api\v1'], function () {
     Route::resource('products', 'ProductController');
+    Route::get('getProductByCategory/{id}', 'ProductController@getProductByCategory');
     Route::resource('categories', 'CategoriesController');
+    Route::get('getListProductByCategory/{id}', 'CategoriesController@getListProductByCategory');
 });
 
