@@ -15,9 +15,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $searchText = $request->searchText;
+        $perPage = $request->perPage ?? 10;
         
         // Cách 1: return only item ( cũ chuối )
         // return $products->map(function($product) {
@@ -28,10 +29,10 @@ class ProductController extends Controller
 
         // Cách 2: Chuối ni xịn hơn => dùng
         try {
-            $products = $products->map->only('id', 'name', 'description', 'nIdCategory')->toArray();
+            $products = Product::paginate($perPage);
             return APIHelpers::createAPIResponse(true, 200, '', $products, null);
         } catch (\Exception $e) {
-            return APIHelpers::createAPIResponse(false, 401, '', $products, $e->getmessage());
+            return APIHelpers::createAPIResponse(false, 401, '', null, $e->getmessage());
         }
     }
 
