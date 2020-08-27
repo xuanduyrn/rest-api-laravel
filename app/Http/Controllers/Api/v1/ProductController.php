@@ -19,19 +19,19 @@ class ProductController extends Controller
     {
         $searchText = $request->searchText;
         $perPage = $request->perPage ?? 10;
-        
-        // Cách 1: return only item ( cũ chuối )
-        // return $products->map(function($product) {
-        //     return collect($product -> toArray())
-        //     ->only(['id', 'name', 'description'])
-        //     ->all();
-        // });
-
-        // Cách 2: Chuối ni xịn hơn => dùng
+        $sortBy = 'created_at';
+        $sortType = 'ASC';
+        if ($request->has('name')) {
+            $sortBy = 'name';
+            $sortType = $request->name ?? 'asc';
+        } else if ($request->has('price')) {
+            $sortBy = 'price';
+            $sortType = $request->price ?? 'asc';
+        }
         try {
-            $products = Product::paginate($perPage);
+            $products = Product::orderBy($sortBy, $sortType)->paginate($perPage);
             if ($searchText) {
-                $products = Product::where('name', 'LIKE', '%' .$searchText. '%')->orWhere('created_at', 'LIKE', '%' .$searchText. '%')->paginate($perPage);
+                $products = Product::where('name', 'LIKE', '%' .$searchText. '%')->orderBy($sortBy, $sortType)->orWhere('created_at', 'LIKE', '%' .$searchText. '%')->paginate($perPage);
             }
             return APIHelpers::createAPIResponse(true, 200, '', $products, null);
         } catch (\Exception $e) {
