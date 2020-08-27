@@ -30,6 +30,9 @@ class ProductController extends Controller
         // Cách 2: Chuối ni xịn hơn => dùng
         try {
             $products = Product::paginate($perPage);
+            if ($searchText) {
+                $products = Product::where('name', 'LIKE', '%' .$searchText. '%')->orWhere('created_at', 'LIKE', '%' .$searchText. '%')->paginate($perPage);
+            }
             return APIHelpers::createAPIResponse(true, 200, '', $products, null);
         } catch (\Exception $e) {
             return APIHelpers::createAPIResponse(false, 401, '', null, $e->getmessage());
